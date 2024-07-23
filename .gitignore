@@ -1,0 +1,50 @@
+# macOS system files
+.DS_Store
+
+# Rust build artifacts
+**/target/
+**/*.rs.bk
+**/Cargo.lock
+
+# Compiled ELF binaries
+/verifiable_computation/elf_binaries/
+
+# Verifiable artifacts (may contain sensitive data)
+/verifiable_computation/verifiable_artifacts/
+
+# Keys (these should not be in version control)
+/verifiable_computation/keys/
+
+# CSV result files (these are typically generated and not source controlled)
+*.csv
+
+# Node modules and package locks (for blockchain_storage)
+/blockchain_storage/node_modules/
+/blockchain_storage/package-lock.json
+
+# Hardhat artifacts and cache
+/blockchain_storage/artifacts/
+/blockchain_storage/cache/
+/blockchain_storage/ignition/
+
+# Python virtual environments (if you're using them)
+**/venv/
+**/__pycache__/
+
+# IDE and editor files
+.vscode/
+.idea/
+
+# Log files
+*.log
+
+# Environment variables file (if you're using one)
+.env
+
+# Temporary files
+*.tmp
+
+# Specific files that should not be tracked
+files.txt
+
+enclave_attestation/
