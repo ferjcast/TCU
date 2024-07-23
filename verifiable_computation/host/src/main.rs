@@ -76,6 +76,10 @@ struct Args {
     #[arg(short = 't', long, default_value_t = 2)]
     compute_type: usize,
 
+    ///not-composed = 0, tee = 1, zkvm = 2
+    #[arg(short = 'm', long, default_value_t = 2)]
+    composed: usize,
+
 
     /// create signing keys
     #[arg(short, long, default_value_t = false)]
@@ -91,13 +95,21 @@ struct SignedMatrix {
 }
 
 fn create_random_matrix(n: usize, seed: Option<u64>) -> DenseMatrix<u8> {
+    let mut data: Vec<u8> = vec![0; n * n];
+
+    for i in 0..n {
+        data[i * n + i] = 2;
+    }
+
+    DenseMatrix::new(n, n, data, false)
+    /* 
     let mut rng = match seed {
         Some(s) => StdRng::seed_from_u64(s),
         None => StdRng::from_entropy(),
     };
     
     let data: Vec<u8> = (0..n*n).map(|_| rng.gen::<u8>()).collect();
-    DenseMatrix::new(n, n, data, false)
+    DenseMatrix::new(n, n, data, false)*/
 }
 
 fn compute_hash(matrix: &DenseMatrix<u8>) -> Vec<u8> {
@@ -168,6 +180,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let verifying_type = args.verifying_type;
     let compute_type = args.compute_type;
     let create_keys = args.create_keys;
+    let composed = args.composed;
 
     if create_keys{
         println!("Creating keys for signing and verification");
@@ -183,23 +196,33 @@ fn main() -> Result<(), Box<dyn Error>> {
         println!("Working on TEE Workflow");
 
         if proving {        
-            println!("Proving TEE Workflow");
-            println!("Square Matrix size {}", n_size);
-            
+            if composed>0{
+                if composed==1{
 
-            let x: DenseMatrix<u8> = create_random_matrix(n_size, Some(12345));
-            let y: DenseMatrix<u8> = create_random_matrix(n_size, Some(12345));
-            let unwrap_m: DenseMatrix<u8> = x.matmul(&y); 
-            //println!("{}", unwrap_m);
-            let random_matrix_hash: Vec<u8> = compute_hash(&unwrap_m);
-            let read_signing_key = read_signing_key("./keys/signing_key.bin")?;
-            let signing_key = read_signing_key;
-            let message = &random_matrix_hash; //b"This is a message that will be signed, and verified within the zkVM";
-            let signature: Signature = signing_key.sign(message);
-            let file_path = format!("./verifiable_artifacts/signed_messages/signed_matrix_{}.json", n_size);
+                }
+                else if composed ==2{
 
-            store_signed_matrix(&unwrap_m, &signature, &file_path)?;
-            println!("Multiplication, Signature and Storing done");
+                }
+            }
+            else{
+                println!("Proving TEE Workflow");
+                println!("Square Matrix size {}", n_size);
+                
+
+                let x: DenseMatrix<u8> = create_random_matrix(n_size, Some(12345));
+                let y: DenseMatrix<u8> = create_random_matrix(n_size, Some(12345));
+                let unwrap_m: DenseMatrix<u8> = x.matmul(&y); 
+                //println!("{}", unwrap_m);
+                let random_matrix_hash: Vec<u8> = compute_hash(&unwrap_m);
+                let read_signing_key = read_signing_key("./keys/signing_key.bin")?;
+                let signing_key = read_signing_key;
+                let message = &random_matrix_hash; //b"This is a message that will be signed, and verified within the zkVM";
+                let signature: Signature = signing_key.sign(message);
+                let file_path = format!("./verifiable_artifacts/signed_messages/signed_matrix_{}.json", n_size);
+
+                store_signed_matrix(&unwrap_m, &signature, &file_path)?;
+                println!("Multiplication, Signature and Storing done");
+            }
 
         }
         if verifying_type == 1{
@@ -221,6 +244,19 @@ fn main() -> Result<(), Box<dyn Error>> {
             println!("Hash is valid: {}", hash_valid);
             println!("Signature is valid: {}", signature_valid);
             println!("Verification complete");
+            if composed>0{
+                let internal_x: DenseMatrix<u8> = create_random_matrix(n_size, Some(12345));
+                let unwrap_m: DenseMatrix<u8> = internal_x.matmul(&read_matrix); 
+                //println!("{}", unwrap_m);
+                let random_matrix_hash: Vec<u8> = compute_hash(&unwrap_m);
+                let read_signing_key = read_signing_key("./keys/signing_key.bin")?;
+                let signing_key = read_signing_key;
+                let message = &random_matrix_hash; //b"This is a message that will be signed, and verified within the zkVM";
+                let signature: Signature = signing_key.sign(message);
+                let file_path = format!("./verifiable_artifacts/signed_messages/composed_tee_signed_matrix_{}.json", n_size);
+                store_signed_matrix(&unwrap_m, &signature, &file_path)?;
+                println!("Composed Verification and Multiplication, Signature and Storing done");
+            }
         
         }
         else if verifying_type == 2{
@@ -240,6 +276,21 @@ fn main() -> Result<(), Box<dyn Error>> {
                         "Code you have proven should successfully verify; did you specify the correct image ID?",
                     );
             println!("Matrix Multiplication Proof Verified");
+            if composed>0{
+                let internal_x: DenseMatrix<u8> = create_random_matrix(n_size, Some(12345));
+                let (read_matrix): (DenseMatrix<u8>) = receipt.journal.decode().unwrap();
+                let unwrap_m: DenseMatrix<u8> = internal_x.matmul(&read_matrix); 
+                //println!("{}", unwrap_m);
+                let random_matrix_hash: Vec<u8> = compute_hash(&unwrap_m);
+                let read_signing_key = read_signing_key("./keys/signing_key.bin")?;
+                let signing_key = read_signing_key;
+                let message = &random_matrix_hash; //b"This is a message that will be signed, and verified within the zkVM";
+                let signature: Signature = signing_key.sign(message);
+                let file_path = format!("./verifiable_artifacts/signed_messages/composed_zkvm_signed_matrix_{}.json", n_size);
+                store_signed_matrix(&unwrap_m, &signature, &file_path)?;
+                println!("Composed Verification and Multiplication, Signature and Storing done");
+
+            }
             
         }
     }
@@ -248,30 +299,40 @@ fn main() -> Result<(), Box<dyn Error>> {
         println!("Square Matrix size {}", n_size);
 
         if proving{        
-            println!("Proving ZKVM Workflow");
-            println!("Square Matrix size {}", n_size);
-            let elf_path = "./elf_binaries/matrix_multiplication_proving"; // target_dir.join(&pkg_name).join(&target.name);
-            let elf = std::fs::read(&elf_path)
-            .with_context(|| format!("Failed to read ELF file at path: {}", elf_path))?;
-            let n = n_size;
-            let x: DenseMatrix<u8> = create_random_matrix(n_size, Some(12345));
-            let y: DenseMatrix<u8> = create_random_matrix(n_size, Some(12345));
-            println!("{}", x);
-            println!("{}", y);
-            let env = ExecutorEnv::builder()
-                .write(&x)
-                .expect("model failed to serialize")
-                .write(&y)
-                .expect("data failed to serialize")
-                .build()
-                .unwrap();
-            let prover = default_prover();
-            
-            let receipt = prover.prove(env, &elf).unwrap().receipt;
-            let base_name = "./verifiable_artifacts/receipts/receipt_multiplication_size_";
-            let receipt_path = format!("{}{}", base_name, n);
-            fs::write(&receipt_path, bincode::serialize(&receipt).unwrap())?;
-            println!("Proof Receipt Stored in: {}",receipt_path);
+            if composed>0{
+                if composed==1{
+
+                }
+                else if composed ==2{
+
+                }
+            }
+            else{        
+                println!("Proving ZKVM Workflow");
+                println!("Square Matrix size {}", n_size);
+                let elf_path = "./elf_binaries/matrix_multiplication_proving"; // target_dir.join(&pkg_name).join(&target.name);
+                let elf = std::fs::read(&elf_path)
+                .with_context(|| format!("Failed to read ELF file at path: {}", elf_path))?;
+                let n = n_size;
+                let x: DenseMatrix<u8> = create_random_matrix(n_size, Some(12345));
+                let y: DenseMatrix<u8> = create_random_matrix(n_size, Some(12345));
+                println!("{}", x);
+                println!("{}", y);
+                let env = ExecutorEnv::builder()
+                    .write(&x)
+                    .expect("model failed to serialize")
+                    .write(&y)
+                    .expect("data failed to serialize")
+                    .build()
+                    .unwrap();
+                let prover = default_prover();
+                
+                let receipt = prover.prove(env, &elf).unwrap().receipt;
+                let base_name = "./verifiable_artifacts/receipts/receipt_multiplication_size_";
+                let receipt_path = format!("{}{}", base_name, n);
+                fs::write(&receipt_path, bincode::serialize(&receipt).unwrap())?;
+                println!("Proof Receipt Stored in: {}",receipt_path);
+            }
 
 
         }
@@ -286,33 +347,66 @@ fn main() -> Result<(), Box<dyn Error>> {
             let read_hash = compute_hash(&read_matrix);
             let hash_valid = hex::encode(read_hash.clone()) == signed_matrix.hash;
             let verifying_key = read_verifying_key("./keys/verifying_key.bin")?;
-            let integer_sample: u8 = 1;
 
             // Verify the signature
             let read_signature = Signature::from_slice(&base64::decode(signed_matrix.signature).expect("Invalid base64 signature"))
                 .expect("Invalid signature");
 
-            let elf_path = "./elf_binaries/matrix_multiplication_tee_verification"; // target_dir.join(&pkg_name).join(&target.name);
-            let elf = std::fs::read(&elf_path)
-            .with_context(|| format!("Failed to read ELF file at path: {}", elf_path))?;
+            if composed >0{ //Performs also multiplication
 
-            let env = ExecutorEnv::builder()
-                .write(&(
-                    read_matrix,
-                    integer_sample,
-                    verifying_key.to_encoded_point(true),
-                    &read_hash,
-                    read_signature,
-                ))
-                .unwrap()
-                .build()
-                .unwrap();
 
-            let _receipt = default_prover()
-                .prove(env, &elf)
-                .unwrap()
-                .receipt;
-            println!("Matrix Multiplication Signature Verified inside ZKVM");
+                let internal_y: DenseMatrix<u8> = create_random_matrix(n_size, Some(12345));
+                
+                let elf_path = "./elf_binaries/matrix_multiplication_tee_verification_proving"; // target_dir.join(&pkg_name).join(&target.name);
+                let elf = std::fs::read(&elf_path)
+                .with_context(|| format!("Failed to read ELF file at path: {}", elf_path))?;
+
+    
+                let env = ExecutorEnv::builder()
+                    .write(&(
+                        read_matrix,
+                        internal_y,
+                        verifying_key.to_encoded_point(true),
+                        &read_hash,
+                        read_signature,
+                    ))
+                    .unwrap()
+                    .build()
+                    .unwrap();
+    
+                let _receipt = default_prover()
+                    .prove(env, &elf)
+                    .unwrap()
+                    .receipt;
+                println!("Composed Verification and Multiplication ZKVM");
+            }
+            else{ //Just validates
+                let integer_sample: u8 = 1;
+
+                let elf_path = "./elf_binaries/matrix_multiplication_tee_verification"; // target_dir.join(&pkg_name).join(&target.name);
+                let elf = std::fs::read(&elf_path)
+                .with_context(|| format!("Failed to read ELF file at path: {}", elf_path))?;
+
+    
+                let env = ExecutorEnv::builder()
+                    .write(&(
+                        read_matrix,
+                        integer_sample,
+                        verifying_key.to_encoded_point(true),
+                        &read_hash,
+                        read_signature,
+                    ))
+                    .unwrap()
+                    .build()
+                    .unwrap();
+    
+                let _receipt = default_prover()
+                    .prove(env, &elf)
+                    .unwrap()
+                    .receipt;
+                println!("Matrix Multiplication Signature Verified inside ZKVM");
+
+            }
 
         }
         else if verifying_type == 2{
@@ -332,24 +426,51 @@ fn main() -> Result<(), Box<dyn Error>> {
             let unwrap_m: DenseMatrix<u8> = receipt.journal.decode().expect(
                 "Journal output should deserialize into the same types (& order) that it was written",
             );
-            let integer_sample: u8 = 1; 
 
-            let elf_path_composed = "./elf_binaries/matrix_multiplication_zkvm_verification"; // target_dir.join(&pkg_name).join(&target.name);
-            let elf_compose = std::fs::read(&elf_path_composed)
-            .with_context(|| format!("Failed to read ELF file at path: {}", elf_path_composed))?;
+            if composed>0{
+                let internal_y: DenseMatrix<u8> = create_random_matrix(n_size, Some(12345));
 
-            let env = ExecutorEnv::builder()
-                .add_assumption(receipt)
-                .write(&(unwrap_m, integer_sample, image_id))
-                .unwrap()
-                .build()
-                .unwrap();
+                let elf_path_composed = "./elf_binaries/matrix_multiplication_zkvm_verification_w_proving"; // target_dir.join(&pkg_name).join(&target.name);
+                let elf_compose = std::fs::read(&elf_path_composed)
+                .with_context(|| format!("Failed to read ELF file at path: {}", elf_path_composed))?;
+    
+                let env = ExecutorEnv::builder()
+                    .add_assumption(receipt)
+                    .write(&(unwrap_m, internal_y, image_id))
+                    .unwrap()
+                    .build()
+                    .unwrap();
+    
+                let _receipt = default_prover()
+                    .prove(env, &elf_compose)
+                    .unwrap()
+                    .receipt;
+                println!("Matrix Multiplication Receipt Verified inside ZKVM");
 
-            let _receipt = default_prover()
-                .prove(env, &elf_compose)
-                .unwrap()
-                .receipt;
-            println!("Matrix Multiplication Receipt Verified inside ZKVM");
+            }
+            else{
+
+                let integer_sample: u8 = 1; 
+
+                let elf_path_composed = "./elf_binaries/matrix_multiplication_zkvm_verification"; // target_dir.join(&pkg_name).join(&target.name);
+                let elf_compose = std::fs::read(&elf_path_composed)
+                .with_context(|| format!("Failed to read ELF file at path: {}", elf_path_composed))?;
+    
+                let env = ExecutorEnv::builder()
+                    .add_assumption(receipt)
+                    .write(&(unwrap_m, integer_sample, image_id))
+                    .unwrap()
+                    .build()
+                    .unwrap();
+    
+                let _receipt = default_prover()
+                    .prove(env, &elf_compose)
+                    .unwrap()
+                    .receipt;
+                println!("Matrix Multiplication Receipt Verified inside ZKVM");
+    
+
+            }
 
             /* If want to verify also the final composed proof
             let image_id_compose = risc0_binfmt::compute_image_id(&elf_compose)?;
