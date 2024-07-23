@@ -102,7 +102,7 @@ fn create_random_matrix(n: usize, seed: Option<u64>) -> DenseMatrix<u8> {
     }
 
     DenseMatrix::new(n, n, data, false)
-    /* 
+    /* replace to do random matrix, WARNING: multiplication could lead to overflow
     let mut rng = match seed {
         Some(s) => StdRng::seed_from_u64(s),
         None => StdRng::from_entropy(),
@@ -357,7 +357,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
                 let internal_y: DenseMatrix<u8> = create_random_matrix(n_size, Some(12345));
                 
-                let elf_path = "./elf_binaries/matrix_multiplication_tee_verification_proving"; // target_dir.join(&pkg_name).join(&target.name);
+                let elf_path = "./elf_binaries/matrix_multiplication_tee_verification_w_proving"; // target_dir.join(&pkg_name).join(&target.name);
                 let elf = std::fs::read(&elf_path)
                 .with_context(|| format!("Failed to read ELF file at path: {}", elf_path))?;
 

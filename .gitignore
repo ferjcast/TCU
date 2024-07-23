@@ -7,13 +7,18 @@
 **/Cargo.lock
 
 # Compiled ELF binaries
-/verifiable_computation/elf_binaries/
+/verifiable_computation/elf_binaries/*
+
+
+# Compiled EIF 
+/verifiable_computation/*.eif
 
 # Verifiable artifacts (may contain sensitive data)
-/verifiable_computation/verifiable_artifacts/
+/verifiable_computation/verifiable_artifacts/receipts/*
+/verifiable_computation/verifiable_artifacts/signed_messages/*
 
 # Keys (these should not be in version control)
-/verifiable_computation/keys/
+/verifiable_computation/keys/*
 
 # CSV result files (these are typically generated and not source controlled)
 *.csv
@@ -46,4 +51,5 @@
 
 # Specific files that should not be tracked
 files.txt
+verifiable_computation/host_final
 

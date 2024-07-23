@@ -69,7 +69,7 @@ fn main() {
 
     let z = n.matmul(&a);
     
-    println!("The value of z is: {}", z);
+    //println!("The value of z is: {}", z);
 
     // Verify that n has a known factorization.
     //env::verify(ML_TEMPLATE_ID, &serde::to_vec(&n).unwrap()).unwrap();

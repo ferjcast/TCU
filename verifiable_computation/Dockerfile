@@ -24,14 +24,17 @@ RUN apt-get update && apt-get install -y \
     python3 \
     bc
 
-COPY . .
+COPY ./scripts/install_rust.sh ./scripts/install_rust.sh
+COPY ./scripts/install_risc0.sh ./scripts/install_risc0.sh
 
 
 ENV TERM=xterm
 
+
+
 #RUN chmod +x measurements_tee.sh
 #INSTALL RUST
-RUN chmod +x scripts/install_rust.sh scripts/install_risc0.sh
+#RUN chmod +x scripts/install_rust.sh scripts/install_risc0.sh
 RUN ./scripts/install_rust.sh
 #RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 # Source the environment file
@@ -46,7 +49,11 @@ RUN ./scripts/install_risc0.sh
 #INSTALL RISC0 BIN
 ENV PATH="$PATH:/root/.risc0/bin"
 
+
+##RISC0 and BUILD can be skipped using a local built, so the docker image and eif are smaller
 RUN rzup --verbose --version 1.0.1
+
+COPY . .
 
 RUN cd host
 RUN cargo build --release
@@ -54,5 +61,5 @@ RUN cd ..
 RUN mv target/release/host host_final
 RUN chmod +x measurements_tee.sh
 
-CMD ["./measurements_tee.sh", "/usr/src/app/host_final"]
+CMD ["/usr/src/app/measurements_tee.sh", "/usr/src/app/host_final"]
 #CMD ["bash"]
