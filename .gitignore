@@ -47,4 +47,3 @@
 # Specific files that should not be tracked
 files.txt
 
-enclave_attestation/
