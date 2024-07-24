@@ -32,6 +32,6 @@ base64 = "0.22.1"
 
 [features]
 cuda = ["risc0-zkvm/cuda"]
-#default = ["prove"]
+default = ["prove"]
 metal = ["risc0-zkvm/metal"]
 prove = ["risc0-zkvm/prove"]

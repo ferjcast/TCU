@@ -69,7 +69,7 @@ fi
 
 
 # Measure performance for different tasks
-#measure_performance "create_keys" --create-keys
+measure_performance "create_keys" --create-keys
 SIZES=(3 5 10 20 30 50 100 200 500 1000 2000)
 measure_performance "proving_tee" --compute-type 1 --proving --verifying-type 0
 SIZES=(3 5 10 20 30 50 100 200)
