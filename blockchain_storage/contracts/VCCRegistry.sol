@@ -3,33 +3,43 @@ pragma solidity ^0.8.0;
 
 contract VCCRegistry {
     struct VCC {
-        bytes32 verificationKey;
-        bytes32 publicKey;
-        bytes32 predecessorId;
-        bytes32 successorId;
-        address auditTrailAddress;
+        string verificationKeyURI;
+        string publicKeyURI;
+        address predecessorId;
+        address successorId;
+        address traceTrailAddress;
     }
 
-    mapping(bytes32 => VCC) public vccs;
+    mapping(address => VCC) public vccs;
 
-    event VCCRegistered(bytes32 indexed id, bytes32 verificationKey, bytes32 publicKey, bytes32 predecessorId, bytes32 successorId, address auditTrailAddress);
+    event VCCRegistered(
+        address indexed id,
+        string verificationKeyURI,
+        string publicKeyURI,
+        address predecessorId,
+        address successorId,
+        address traceTrailAddress
+    );
 
     function registerVCC(
-        bytes32 id,
-        bytes32 verificationKey,
-        bytes32 publicKey,
-        bytes32 predecessorId,
-        bytes32 successorId,
-        address auditTrailAddress
+        string memory verificationKeyURI,
+        string memory publicKeyURI,
+        address predecessorId,
+        address successorId,
+        address traceTrailAddress
     ) external {
-        require(vccs[id].verificationKey == bytes32(0), "VCC already registered");
+        require(bytes(vccs[msg.sender].verificationKeyURI).length == 0, "VCC already registered");
         
-        vccs[id] = VCC(verificationKey, publicKey, predecessorId, successorId, auditTrailAddress);
+        vccs[msg.sender] = VCC(verificationKeyURI, publicKeyURI, predecessorId, successorId, traceTrailAddress);
         
-        emit VCCRegistered(id, verificationKey, publicKey, predecessorId, successorId, auditTrailAddress);
+        emit VCCRegistered(msg.sender, verificationKeyURI, publicKeyURI, predecessorId, successorId, traceTrailAddress);
     }
 
-    function getVCC(bytes32 id) external view returns (VCC memory) {
+    function getVCC(address id) external view returns (VCC memory) {
         return vccs[id];
+    }
+
+    function isRegisteredVCC(address vccId) external view returns (bool) {
+        return bytes(vccs[vccId].verificationKeyURI).length > 0;
     }
 }
