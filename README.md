@@ -10,6 +10,13 @@ The project is divided into three main components:
 2. `enclave_attestation/`: Tools and utilities for Trusted Execution Environment (TEE) attestation
 3. `verifiable_computation/`: Implementation of Verifiable Composable Components (VCCs) using TEEs and zkVMs
 
+## Getting Started
+
+Test each component by following the instructions in their respective READMEs:
+- [Blockchain Storage Setup](./blockchain_storage/README.md)
+- [Enclave Attestation Setup](./enclave_attestation/README.md)
+- [Verifiable Computation Setup](./verifiable_computation/README.md)
+
 ## Components
 
 ### Blockchain Storage
@@ -20,7 +27,7 @@ The `blockchain_storage/` directory contains the smart contract implementation f
 - Audit Trail
 - Smart contracts for managing workflow states
 
-To set up and run the blockchain component, refer to the README in the `blockchain_storage/` directory.
+To set up and run the blockchain component, refer to the [**README**](./blockchain_storage/README.md) in the `blockchain_storage/` directory.
 
 ### Enclave Attestation
 
@@ -29,7 +36,7 @@ The `enclave_attestation/` directory contains tools and utilities for working wi
 - Attestation verification tools
 - Secure communication utilities
 
-For more information on setting up and using the enclave attestation tools, see the README in the `enclave_attestation/` directory.
+For more information on setting up and using the enclave attestation tools, see the [**README**](./enclave_attestation/README.md) in the `enclave_attestation/` directory.
 
 ### Verifiable Computation
 
@@ -39,14 +46,9 @@ The `verifiable_computation/` directory contains the implementation of Verifiabl
 - Proving and verification modules
 - Performance measurement tools
 
-To run experiments and benchmarks, refer to the README in the `verifiable_computation/` directory.
+To run experiments and benchmarks, refer to the  [**README**](./verifiable_computation/README.md) in the `verifiable_computation/` directory.
 
-## Getting Started
 
-2. Test each component by following the instructions in their respective READMEs:
-- [Blockchain Storage Setup](./blockchain_storage/README.md)
-- [Enclave Attestation Setup](./enclave_attestation/README.md)
-- [Verifiable Computation Setup](./verifiable_computation/README.md)
 
 
 ## Contributing
