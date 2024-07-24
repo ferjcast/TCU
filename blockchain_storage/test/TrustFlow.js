@@ -23,8 +23,8 @@ describe("VCC System", () => {
 
   describe("VCCRegistry", () => {
     it("Should register a new VCC", async () => {
-      const verificationKey = ethers.encodeBytes32String("vk1");
-      const publicKey = ethers.encodeBytes32String("pk1");
+      const verificationKey = "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds--VerificationKey1";
+      const publicKey =       "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds------QmPublicKey1";
 
       await expect(vccRegistry.connect(vcc1).registerVCC(
         verificationKey,
@@ -45,8 +45,9 @@ describe("VCC System", () => {
     });
 
     it("Should not allow registering the same VCC twice", async () => {
-      const verificationKey = ethers.encodeBytes32String("vk1");
-      const publicKey = ethers.encodeBytes32String("pk1");
+        const verificationKey = "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds--VerificationKey1";
+        const publicKey =       "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds------QmPublicKey1";
+  
 
       await vccRegistry.connect(vcc1).registerVCC(
         verificationKey,
@@ -68,9 +69,9 @@ describe("VCC System", () => {
     });
 
     it("Should correctly identify registered VCCs", async () => {
-      const verificationKey = ethers.encodeBytes32String("vk1");
-      const publicKey = ethers.encodeBytes32String("pk1");
-
+        const verificationKey = "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds--VerificationKey1";
+        const publicKey =       "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds------QmPublicKey1";
+  
       await vccRegistry.connect(vcc1).registerVCC(
         verificationKey,
         publicKey,
@@ -87,8 +88,9 @@ describe("VCC System", () => {
   describe("VCCTraceTrail", () => {
     beforeEach(async () => {
       // Register VCCs
-      const verificationKey = ethers.encodeBytes32String("vk");
-      const publicKey = ethers.encodeBytes32String("pk");
+      const verificationKey = "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds--VerificationKey1";
+      const publicKey =       "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds------QmPublicKey1";
+
 
       await vccRegistry.connect(vcc1).registerVCC(
         verificationKey,
