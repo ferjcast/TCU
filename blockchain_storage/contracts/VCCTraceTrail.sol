@@ -1,63 +1,67 @@
 // SPDX-License-Identifier: MIT
-import "./VCCRegistry.sol";
+pragma solidity ^0.8.0;
+
+interface IVCCRegistry {
+    function isRegisteredVCC(address vccId) external view returns (bool);
+}
 
 contract VCCTraceTrail {
     struct TraceEvent {
-        string outputCommitmentURI;
-        string internalInputCommitmentURI;
-        string externalInputCommitmentURI;
+        bytes32 outputCommitment;     // C(Out_n)
+        bytes32 internalInputCommitment; // C(IIn_n)
+        bytes32 externalInputCommitment; // C(EIn_n) or C(Out_{n-1})
         address parentTraceEventVCC;
-        string executionSpanIdURI;
+        bytes32 executionSpanId;
     }
 
-    mapping(address => mapping(string => TraceEvent)) public traceEvents;
-    VCCRegistry public vccRegistry;
+    mapping(address => mapping(bytes32 => TraceEvent)) public traceEvents;
+    IVCCRegistry public vccRegistry;
 
     event TraceEventLogged(
         address indexed vccId,
-        string indexed eventIdURI,
-        string outputCommitmentURI,
-        string internalInputCommitmentURI,
-        string externalInputCommitmentURI,
+        bytes32 indexed eventId,
+        bytes32 outputCommitment,
+        bytes32 internalInputCommitment,
+        bytes32 externalInputCommitment,
         address parentTraceEventVCC,
-        string executionSpanIdURI
+        bytes32 executionSpanId
     );
 
     constructor(address _vccRegistryAddress) {
-        vccRegistry = VCCRegistry(_vccRegistryAddress);
+        vccRegistry = IVCCRegistry(_vccRegistryAddress);
     }
 
     function logTraceEvent(
-        string memory eventIdURI,
-        string memory outputCommitmentURI,
-        string memory internalInputCommitmentURI,
-        string memory externalInputCommitmentURI,
+        bytes32 eventId,
+        bytes32 outputCommitment,
+        bytes32 internalInputCommitment,
+        bytes32 externalInputCommitment,
         address parentTraceEventVCC,
-        string memory executionSpanIdURI
+        bytes32 executionSpanId
     ) external {
         require(vccRegistry.isRegisteredVCC(msg.sender), "Caller is not a registered VCC");
-        require(bytes(traceEvents[msg.sender][eventIdURI].outputCommitmentURI).length == 0, "Trace event already exists");
+        require(traceEvents[msg.sender][eventId].outputCommitment == bytes32(0), "Trace event already exists");
         
-        traceEvents[msg.sender][eventIdURI] = TraceEvent(
-            outputCommitmentURI,
-            internalInputCommitmentURI,
-            externalInputCommitmentURI,
+        traceEvents[msg.sender][eventId] = TraceEvent(
+            outputCommitment,
+            internalInputCommitment,
+            externalInputCommitment,
             parentTraceEventVCC,
-            executionSpanIdURI
+            executionSpanId
         );
         
         emit TraceEventLogged(
             msg.sender,
-            eventIdURI,
-            outputCommitmentURI,
-            internalInputCommitmentURI,
-            externalInputCommitmentURI,
+            eventId,
+            outputCommitment,
+            internalInputCommitment,
+            externalInputCommitment,
             parentTraceEventVCC,
-            executionSpanIdURI
+            executionSpanId
         );
     }
 
-    function getTraceEvent(address vccId, string memory eventIdURI) external view returns (TraceEvent memory) {
-        return traceEvents[vccId][eventIdURI];
+    function getTraceEvent(address vccId, bytes32 eventId) external view returns (TraceEvent memory) {
+        return traceEvents[vccId][eventId];
     }
 }

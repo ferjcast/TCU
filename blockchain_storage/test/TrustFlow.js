@@ -18,60 +18,65 @@ describe("VCC System", () => {
     vccRegistry = await VCCRegistry.deploy();
 
     VCCTraceTrail = await ethers.getContractFactory("VCCTraceTrail");
-    vccTraceTrail = await VCCTraceTrail.deploy(vccRegistry.target);
+    vccTraceTrail = await VCCTraceTrail.deploy(await vccRegistry.getAddress());
   });
 
   describe("VCCRegistry", () => {
     it("Should register a new VCC", async () => {
-      const verificationKeyURI = "ipfs://QmVerificationKey1";
-      const publicKeyURI = "ipfs://QmPublicKey1";
+      const verificationKey = ethers.encodeBytes32String("vk1");
+      const publicKey = ethers.encodeBytes32String("pk1");
 
       await expect(vccRegistry.connect(vcc1).registerVCC(
-        verificationKeyURI,
-        publicKeyURI,
+        verificationKey,
+        publicKey,
         ethers.ZeroAddress,
         vcc2.address,
-        vccTraceTrail.target
+        await vccTraceTrail.getAddress()
       )).to.emit(vccRegistry, "VCCRegistered");
 
       const registeredVCC = await vccRegistry.getVCC(vcc1.address);
-      expect(registeredVCC.verificationKeyURI).to.equal(verificationKeyURI);
-      expect(registeredVCC.publicKeyURI).to.equal(publicKeyURI);
+      const [returnedVerificationKey, returnedPublicKey, predecessorId, successorId, traceTrailAddress] = registeredVCC;
+
+      expect(returnedVerificationKey).to.equal(verificationKey);
+      expect(returnedPublicKey).to.equal(publicKey);
+      expect(predecessorId).to.equal(ethers.ZeroAddress);
+      expect(successorId).to.equal(vcc2.address);
+      expect(traceTrailAddress).to.equal(await vccTraceTrail.getAddress());
     });
 
     it("Should not allow registering the same VCC twice", async () => {
-      const verificationKeyURI = "ipfs://QmVerificationKey1";
-      const publicKeyURI = "ipfs://QmPublicKey1";
+      const verificationKey = ethers.encodeBytes32String("vk1");
+      const publicKey = ethers.encodeBytes32String("pk1");
 
       await vccRegistry.connect(vcc1).registerVCC(
-        verificationKeyURI,
-        publicKeyURI,
+        verificationKey,
+        publicKey,
         ethers.ZeroAddress,
         vcc2.address,
-        vccTraceTrail.target
+        await vccTraceTrail.getAddress()
       );
 
       await expect(
         vccRegistry.connect(vcc1).registerVCC(
-          verificationKeyURI,
-          publicKeyURI,
+          verificationKey,
+          publicKey,
           ethers.ZeroAddress,
           vcc2.address,
-          vccTraceTrail.target
+          await vccTraceTrail.getAddress()
         )
       ).to.be.revertedWith("VCC already registered");
     });
 
     it("Should correctly identify registered VCCs", async () => {
-      const verificationKeyURI = "ipfs://QmVerificationKey1";
-      const publicKeyURI = "ipfs://QmPublicKey1";
+      const verificationKey = ethers.encodeBytes32String("vk1");
+      const publicKey = ethers.encodeBytes32String("pk1");
 
       await vccRegistry.connect(vcc1).registerVCC(
-        verificationKeyURI,
-        publicKeyURI,
+        verificationKey,
+        publicKey,
         ethers.ZeroAddress,
         vcc2.address,
-        vccTraceTrail.target
+        await vccTraceTrail.getAddress()
       );
 
       expect(await vccRegistry.isRegisteredVCC(vcc1.address)).to.be.true;
@@ -82,93 +87,93 @@ describe("VCC System", () => {
   describe("VCCTraceTrail", () => {
     beforeEach(async () => {
       // Register VCCs
-      const verificationKeyURI = "ipfs://QmVerificationKey";
-      const publicKeyURI = "ipfs://QmPublicKey";
+      const verificationKey = ethers.encodeBytes32String("vk");
+      const publicKey = ethers.encodeBytes32String("pk");
 
       await vccRegistry.connect(vcc1).registerVCC(
-        verificationKeyURI,
-        publicKeyURI,
+        verificationKey,
+        publicKey,
         ethers.ZeroAddress,
         vcc2.address,
-        vccTraceTrail.target
+        await vccTraceTrail.getAddress()
       );
 
       await vccRegistry.connect(vcc2).registerVCC(
-        verificationKeyURI,
-        publicKeyURI,
+        verificationKey,
+        publicKey,
         vcc1.address,
         vcc3.address,
-        vccTraceTrail.target
+        await vccTraceTrail.getAddress()
       );
     });
 
     it("Should log a trace event for a registered VCC", async () => {
-      const eventIdURI = "ipfs://QmEvent1";
-      const outputCommitmentURI = "ipfs://QmOutput1";
-      const internalInputCommitmentURI = "ipfs://QmInternal1";
-      const externalInputCommitmentURI = "ipfs://QmExternal1";
-      const executionSpanIdURI = "ipfs://QmSpan1";
+      const eventId = ethers.encodeBytes32String("event1");
+      const outputCommitment = ethers.encodeBytes32String("output1");
+      const internalInputCommitment = ethers.encodeBytes32String("internal1");
+      const externalInputCommitment = ethers.encodeBytes32String("external1");
+      const executionSpanId = ethers.encodeBytes32String("span1");
 
       await expect(
         vccTraceTrail.connect(vcc1).logTraceEvent(
-          eventIdURI,
-          outputCommitmentURI,
-          internalInputCommitmentURI,
-          externalInputCommitmentURI,
+          eventId,
+          outputCommitment,
+          internalInputCommitment,
+          externalInputCommitment,
           ethers.ZeroAddress,
-          executionSpanIdURI
+          executionSpanId
         )
       ).to.emit(vccTraceTrail, "TraceEventLogged");
 
-      const loggedEvent = await vccTraceTrail.getTraceEvent(vcc1.address, eventIdURI);
-      expect(loggedEvent.outputCommitmentURI).to.equal(outputCommitmentURI);
-      expect(loggedEvent.internalInputCommitmentURI).to.equal(internalInputCommitmentURI);
-      expect(loggedEvent.externalInputCommitmentURI).to.equal(externalInputCommitmentURI);
+      const loggedEvent = await vccTraceTrail.getTraceEvent(vcc1.address, eventId);
+      expect(loggedEvent.outputCommitment).to.equal(outputCommitment);
+      expect(loggedEvent.internalInputCommitment).to.equal(internalInputCommitment);
+      expect(loggedEvent.externalInputCommitment).to.equal(externalInputCommitment);
     });
 
     it("Should not allow logging a trace event for an unregistered VCC", async () => {
-      const eventIdURI = "ipfs://QmEvent1";
-      const outputCommitmentURI = "ipfs://QmOutput1";
-      const internalInputCommitmentURI = "ipfs://QmInternal1";
-      const externalInputCommitmentURI = "ipfs://QmExternal1";
-      const executionSpanIdURI = "ipfs://QmSpan1";
+      const eventId = ethers.encodeBytes32String("event1");
+      const outputCommitment = ethers.encodeBytes32String("output1");
+      const internalInputCommitment = ethers.encodeBytes32String("internal1");
+      const externalInputCommitment = ethers.encodeBytes32String("external1");
+      const executionSpanId = ethers.encodeBytes32String("span1");
 
       await expect(
         vccTraceTrail.connect(vcc3).logTraceEvent(
-          eventIdURI,
-          outputCommitmentURI,
-          internalInputCommitmentURI,
-          externalInputCommitmentURI,
+          eventId,
+          outputCommitment,
+          internalInputCommitment,
+          externalInputCommitment,
           vcc2.address,
-          executionSpanIdURI
+          executionSpanId
         )
       ).to.be.revertedWith("Caller is not a registered VCC");
     });
 
     it("Should not allow logging the same trace event twice", async () => {
-      const eventIdURI = "ipfs://QmEvent1";
-      const outputCommitmentURI = "ipfs://QmOutput1";
-      const internalInputCommitmentURI = "ipfs://QmInternal1";
-      const externalInputCommitmentURI = "ipfs://QmExternal1";
-      const executionSpanIdURI = "ipfs://QmSpan1";
+      const eventId = ethers.encodeBytes32String("event1");
+      const outputCommitment = ethers.encodeBytes32String("output1");
+      const internalInputCommitment = ethers.encodeBytes32String("internal1");
+      const externalInputCommitment = ethers.encodeBytes32String("external1");
+      const executionSpanId = ethers.encodeBytes32String("span1");
 
       await vccTraceTrail.connect(vcc1).logTraceEvent(
-        eventIdURI,
-        outputCommitmentURI,
-        internalInputCommitmentURI,
-        externalInputCommitmentURI,
+        eventId,
+        outputCommitment,
+        internalInputCommitment,
+        externalInputCommitment,
         ethers.ZeroAddress,
-        executionSpanIdURI
+        executionSpanId
       );
 
       await expect(
         vccTraceTrail.connect(vcc1).logTraceEvent(
-          eventIdURI,
-          outputCommitmentURI,
-          internalInputCommitmentURI,
-          externalInputCommitmentURI,
+          eventId,
+          outputCommitment,
+          internalInputCommitment,
+          externalInputCommitment,
           ethers.ZeroAddress,
-          executionSpanIdURI
+          executionSpanId
         )
       ).to.be.revertedWith("Trace event already exists");
     });
