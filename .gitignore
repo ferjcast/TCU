@@ -52,4 +52,9 @@
 # Specific files that should not be tracked
 files.txt
 verifiable_computation/host_final
+*.csv
 
+#macos
+._*
+.DS_Store
+*.json

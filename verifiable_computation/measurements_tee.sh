@@ -79,9 +79,9 @@ SIZES=(3 5 10 20 30 50 100 200 500 1000 2000)
 measure_performance "verifying_tee_inside_tee" --compute-type 1 --verifying-type 1
 SIZES=(3 5 10 20 30 50 100 200)
 measure_performance "verifying_zkvm_inside_tee" --compute-type 1 --verifying-type 2
-SIZES=(3 5 10 20 30 50 100 200 500 1000 2000)
-measure_performance "verifying_tee_inside_tee_w_proving" --compute-type 1 --verifying-type 1 --composed 1
-SIZES=(3 5 10 20 30 50 100 200)
-measure_performance "verifying_zkvm_inside_tee_w_proving" --compute-type 1 --verifying-type 2  --composed 2
+#SIZES=(3 5 10 20 30 50 100 200 500 1000 2000)
+#measure_performance "verifying_tee_inside_tee_w_proving" --compute-type 1 --verifying-type 1 --composed 1
+#SIZES=(3 5 10 20 30 50 100 200)
+#measure_performance "verifying_zkvm_inside_tee_w_proving" --compute-type 1 --verifying-type 2  --composed 2
 
 echo "All performance measurements complete."
