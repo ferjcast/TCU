@@ -19,9 +19,13 @@ measure_performance() {
 
         # Capture start time in milliseconds
         START_TIME=$(($(date +%s%N) / 1000000))
+        START_TIME22=$(date )
+        
+        echo "START_TIME: $START_TIME22"
+
 
         OUTPUT=$(
-            /usr/bin/time -f "\nExecution time: %E\nPeak memory: %M KB" "$BINARY" "${args[@]}" --n-size "$size" 2>&1
+            /usr/bin/time -f "\nExecution time: %E\nPeak memory: %M KB" "$BINARY" "${args[@]}"  2>&1
         )
 
         # Capture end time in milliseconds
@@ -70,17 +74,87 @@ fi
 
 # Measure performance for different tasks
 measure_performance "create_keys" --create-keys
-SIZES=(3 5 10 20 30 50 100 200 500 1000 2000)
-measure_performance "proving_tee" --compute-type 1 --proving --verifying-type 0
-SIZES=(3 5 10 20 30 50 100 200)
-measure_performance "proving_zkvm" --compute-type 2 --proving --verifying-type 0
-SIZES=(3 5 10 20 30 50 100 200 500 1000 2000)
-measure_performance "verifying_tee_inside_tee" --compute-type 1 --verifying-type 1
-SIZES=(3 5 10 20 30 50 100 200)
-measure_performance "verifying_zkvm_inside_tee" --compute-type 1 --verifying-type 2
-SIZES=(3 5 10 20 30 50 100 200 500 1000 2000)
-measure_performance "verifying_tee_inside_zkvm" --compute-type 2 --verifying-type 1
-SIZES=(3 5 10 20 30 50 100 200)
-measure_performance "verifying_zkvm_inside_zkvm" --compute-type 2 --verifying-type 2
+SIZES=(1)
+measure_performance "training_tee_20_gm_tee"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 20 --read-ds-num-features 1 --type-global-model 1
+measure_performance "training_tee_40_gm_tee"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 40 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_tee_80_gm_tee"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 80 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_tee_160_gm_tee"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 160 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_tee_320_gm_tee"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 320 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_tee_640_gm_tee"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 640 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_tee_1280_gm_tee"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 1280 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_tee_2560_gm_tee"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 2560 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_tee_5120_gm_tee"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 5120 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_tee_10240_gm_tee"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 10240 --read-ds-num-features 1  --type-global-model 1
 
-echo "All performance measurements complete."
+measure_performance "training_tee_20_gm_zkvm"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 20 --read-ds-num-features 1 --type-global-model 2
+measure_performance "training_tee_40_gm_zkvm"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 40 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_tee_80_gm_zkvm"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 80 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_tee_160_gm_zkvm"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 160 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_tee_320_gm_zkvm"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 320 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_tee_640_gm_zkvm"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 640 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_tee_1280_gm_zkvm"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 1280 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_tee_2560_gm_zkvm"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 2560 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_tee_5120_gm_zkvm"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 5120 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_tee_10240_gm_zkvm"  --previous-training-type 1 --current-compute-type 1 --training --num-aggregations 1 --read-ds-num-samples 10240 --read-ds-num-features 1  --type-global-model 2
+
+measure_performance "training_zkvm_20_gm_tee"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 20 --read-ds-num-features 1  --type-global-model 1 
+measure_performance "training_zkvm_40_gm_tee"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 40 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_zkvm_80_gm_tee"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 80 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_zkvm_160_gm_tee"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 160 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_zkvm_320_gm_tee"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 320 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_zkvm_640_gm_tee"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 640 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_zkvm_1280_gm_tee"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 1280 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_zkvm_2560_gm_tee"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 2560 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_zkvm_5120_gm_tee"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 5120 --read-ds-num-features 1  --type-global-model 1
+measure_performance "training_zkvm_10240_gm_tee"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 10240 --read-ds-num-features 1  --type-global-model 1
+
+measure_performance "training_zkvm_20_gm_zkvm"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 20 --read-ds-num-features 1  --type-global-model 2 
+measure_performance "training_zkvm_40_gm_zkvm"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 40 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_zkvm_80_gm_zkvm"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 80 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_zkvm_160_gm_zkvm"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 160 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_zkvm_320_gm_zkvm"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 320 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_zkvm_640_gm_zkvm"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 640 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_zkvm_1280_gm_zkvm"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 1280 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_zkvm_2560_gm_zkvm"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 2560 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_zkvm_5120_gm_zkvm"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 5120 --read-ds-num-features 1  --type-global-model 2
+measure_performance "training_zkvm_10240_gm_zkvm"  --previous-training-type 1 --current-compute-type 2 --training --num-aggregations 1 --read-ds-num-samples 10240 --read-ds-num-features 1  --type-global-model 2
+
+measure_performance "aggregate_from_tee_inside_tee_2"  --previous-training-type 1 --current-compute-type 1 --aggregate --num-aggregations 2 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_tee_5"  --previous-training-type 1 --current-compute-type 1 --aggregate --num-aggregations 5 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_tee_10"  --previous-training-type 1 --current-compute-type 1 --aggregate --num-aggregations 10 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_tee_20"  --previous-training-type 1 --current-compute-type 1 --aggregate --num-aggregations 20 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_tee_50"  --previous-training-type 1 --current-compute-type 1 --aggregate --num-aggregations 50 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_tee_100"  --previous-training-type 1 --current-compute-type 1 --aggregate --num-aggregations 100 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_tee_200"  --previous-training-type 1 --current-compute-type 1 --aggregate --num-aggregations 200 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_tee_500"  --previous-training-type 1 --current-compute-type 1 --aggregate --num-aggregations 500 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_tee_800"  --previous-training-type 1 --current-compute-type 1 --aggregate --num-aggregations 800 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+
+measure_performance "aggregate_from_tee_inside_zkvm_2"  --previous-training-type 1 --current-compute-type 2 --aggregate --num-aggregations 2 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_zkvm_5"  --previous-training-type 1 --current-compute-type 2 --aggregate --num-aggregations 5 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_zkvm_10"  --previous-training-type 1 --current-compute-type 2 --aggregate --num-aggregations 10 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_zkvm_20"  --previous-training-type 1 --current-compute-type 2 --aggregate --num-aggregations 20 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_zkvm_50"  --previous-training-type 1 --current-compute-type 2 --aggregate --num-aggregations 50 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_zkvm_100"  --previous-training-type 1 --current-compute-type 2 --aggregate --num-aggregations 100 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_zkvm_200"  --previous-training-type 1 --current-compute-type 2 --aggregate --num-aggregations 200 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_zkvm_500"  --previous-training-type 1 --current-compute-type 2 --aggregate --num-aggregations 500 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_tee_inside_zkvm_800"  --previous-training-type 1 --current-compute-type 2 --aggregate --num-aggregations 800 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+
+measure_performance "aggregate_from_zkvm_inside_tee_2"  --previous-training-type 2 --current-compute-type 1 --aggregate --num-aggregations 2 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_tee_5"  --previous-training-type 2 --current-compute-type 1 --aggregate --num-aggregations 5 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_tee_10"  --previous-training-type 2 --current-compute-type 1 --aggregate --num-aggregations 10 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_tee_20"  --previous-training-type 2 --current-compute-type 1 --aggregate --num-aggregations 20 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_tee_50"  --previous-training-type 2 --current-compute-type 1 --aggregate --num-aggregations 50 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_tee_100"  --previous-training-type 2 --current-compute-type 1 --aggregate --num-aggregations 100 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_tee_200"  --previous-training-type 2 --current-compute-type 1 --aggregate --num-aggregations 200 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_tee_500"  --previous-training-type 2 --current-compute-type 1 --aggregate --num-aggregations 500 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_tee_800"  --previous-training-type 2 --current-compute-type 1 --aggregate --num-aggregations 800 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+
+measure_performance "aggregate_from_zkvm_inside_zkvm_2"  --previous-training-type 2 --current-compute-type 2 --aggregate --num-aggregations 2 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_zkvm_5"  --previous-training-type 2 --current-compute-type 2 --aggregate --num-aggregations 5 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_zkvm_10"  --previous-training-type 2 --current-compute-type 2 --aggregate --num-aggregations 10 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_zkvm_20"  --previous-training-type 2 --current-compute-type 2 --aggregate --num-aggregations 20 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_zkvm_50"  --previous-training-type 2 --current-compute-type 2 --aggregate --num-aggregations 50 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_zkvm_100"  --previous-training-type 2 --current-compute-type 2 --aggregate --num-aggregations 100 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_zkvm_200"  --previous-training-type 2 --current-compute-type 2 --aggregate --num-aggregations 200 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_zkvm_500"  --previous-training-type 2 --current-compute-type 2 --aggregate --num-aggregations 500 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
+measure_performance "aggregate_from_zkvm_inside_zkvm_800"  --previous-training-type 2 --current-compute-type 2 --aggregate --num-aggregations 800 --read-ds-num-samples 20 --read-ds-num-features 1   --type-global-model 1
