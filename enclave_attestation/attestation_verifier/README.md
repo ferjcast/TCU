@@ -53,13 +53,12 @@ See [Architecture diagram](./docs/architecture.md)
 1. Login to the instance, clone the repository
 
    ```
-   $ git clone https://github.com/ferjcast/TrustFlow.git
    ```
 
 1. Use the build script to build the enclave image
 
    ```
-   $ cd TrustFlow/enclave_attestation/attestation_verifier/server
+   $ cd VeriFlow/enclave_attestation/attestation_verifier/server
    $ chmod +x build.sh
    $ ./build.sh
    ```

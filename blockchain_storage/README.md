@@ -1,6 +1,6 @@
-# TrustFlow Smart Contracts
+# VeriFlow Smart Contracts
 
-This project contains the smart contracts for the TrustFlow system, implemented using Solidity and tested with Hardhat.
+This project contains the smart contracts for the VeriFlow system, implemented using Solidity and tested with Hardhat.
 
 ## Overview
 

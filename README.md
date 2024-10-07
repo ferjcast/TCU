@@ -1,6 +1,6 @@
-# TrustFlow
+# VeriFlow
 
-This repository contains the implementation of TrustFlow, a system for enabling secure, verifiable, and auditable cross-organizational workflows.
+This repository contains the implementation of VeriFlow, a system for enabling secure, verifiable, and auditable cross-organizational workflows.
 
 ## Project Structure
 
