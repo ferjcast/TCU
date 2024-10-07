@@ -1,8 +1,16 @@
 # Verifiable Computation Experiments
 
-This project implements and compares different approaches to verifiable computation using Rust. It includes implementations of matrix multiplication using Trusted Execution Environments (TEEs) and Zero-Knowledge Virtual Machines (zkVMs), along with performance measurements and comparisons.
+This project implements and compares different approaches to verifiable computation using Rust. It includes implementations of matrix multiplication and federated learning using Trusted Execution Environments (TEEs) and Zero-Knowledge Virtual Machines (zkVMs), along with performance measurements and comparisons.
 
 ## Features
+
+- Federated Learning implementations:
+  - Aggregator node
+  - Learner node 
+  - SGD implementation for optimization of Neural Network.
+  - Using TEEs (AWS Nitro Enclaves)
+  - Using zkVMs (risc0)
+
 
 - Matrix multiplication implementations:
   - Standard algorithm
@@ -46,7 +54,7 @@ This project implements and compares different approaches to verifiable computat
 ```
     ./run-local.sh
 ```
-This will run matrix multiplication experiments for various sizes using different approaches and record the results in CSV files.
+This will run FL experiments for various sizes using different approaches and record the results in CSV files.
 
 4. Build EIF in nitro AWS-EC2
 
@@ -62,21 +70,6 @@ Note: Modify Dockerfile if you want to use already built rust binary to reduce i
 
 
 
-## Results
-
-After running the experiments, following files are created:
-
-- `proving_tee_results.csv`: TEE proving measurements
-- `proving_zkvm_results.csv`: zkVM proving measurements
-- `verifying_tee_inside_tee_results.csv`: TEE verification measurements (inside TEE)
-- `verifying_zkvm_inside_tee_results.csv`: zkVM verification measurements (inside TEE)
-- `verifying_tee_inside_zkvm_results.csv`: TEE verification measurements (inside zkVM)
-- `verifying_zkvm_inside_zkvm_results.csv`: zkVM verification measurements (inside zkVM)
-
-- `verifying_tee_inside_tee_w_proving_results.csv`: TEE verification and proving measurements (inside TEE)
-- `verifying_zkvm_inside_tee_w_proving_results.csv`: zkVM verification and proving measurements (inside TEE)
-- `verifying_tee_inside_zkvm_w_proving_results.csv`: TEE verification and proving measurements (inside zkVM)
-- `verifying_zkvm_inside_zkvm_w_proving_results.csv`: zkVM verification and proving measurements (inside zkVM)
 
 
 ## Contributing
