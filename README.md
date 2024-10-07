@@ -42,6 +42,7 @@ For more information on setting up and using the enclave attestation tools, see 
 
 The `verifiable_computation/` directory contains the implementation of Verifiable Composable Components (VCCs) using both TEEs and zkVMs. This includes:
 
+- Federating Learning Training and Aggregation implementations
 - Matrix multiplication implementations
 - Proving and verification modules
 - Performance measurement tools
