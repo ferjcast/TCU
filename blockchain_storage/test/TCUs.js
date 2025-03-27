@@ -1,115 +1,115 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("VCC System", () => {
-  let VCCRegistry;
-  let VCCTraceTrail;
-  let vccRegistry;
-  let vccTraceTrail;
+describe("TCU System", () => {
+  let TCURegistry;
+  let TCUTraceTrail;
+  let tcuRegistry;
+  let tcuTraceTrail;
   let owner;
-  let vcc1;
-  let vcc2;
-  let vcc3;
+  let tcu1;
+  let tcu2;
+  let tcu3;
 
   beforeEach(async () => {
-    [owner, vcc1, vcc2, vcc3] = await ethers.getSigners();
+    [owner, tcu1, tcu2, tcu3] = await ethers.getSigners();
 
-    VCCRegistry = await ethers.getContractFactory("VCCRegistry");
-    vccRegistry = await VCCRegistry.deploy();
+    TCURegistry = await ethers.getContractFactory("TCURegistry");
+    tcuRegistry = await TCURegistry.deploy();
 
-    VCCTraceTrail = await ethers.getContractFactory("VCCTraceTrail");
-    vccTraceTrail = await VCCTraceTrail.deploy(await vccRegistry.getAddress());
+    TCUTraceTrail = await ethers.getContractFactory("TCUTraceTrail");
+    tcuTraceTrail = await TCUTraceTrail.deploy(await tcuRegistry.getAddress());
   });
 
-  describe("VCCRegistry", () => {
-    it("Should register a new VCC", async () => {
+  describe("TCURegistry", () => {
+    it("Should register a new TCU", async () => {
       const verificationKey = "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds--VerificationKey1";
       const publicKey =       "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds------QmPublicKey1";
 
-      await expect(vccRegistry.connect(vcc1).registerVCC(
+      await expect(tcuRegistry.connect(tcu1).registerTCU(
         verificationKey,
         publicKey,
         ethers.ZeroAddress,
-        vcc2.address,
-        await vccTraceTrail.getAddress()
-      )).to.emit(vccRegistry, "VCCRegistered");
+        tcu2.address,
+        await tcuTraceTrail.getAddress()
+      )).to.emit(tcuRegistry, "TCURegistered");
 
-      const registeredVCC = await vccRegistry.getVCC(vcc1.address);
-      const [returnedVerificationKey, returnedPublicKey, predecessorId, successorId, traceTrailAddress] = registeredVCC;
+      const registeredTCU = await tcuRegistry.getTCU(tcu1.address);
+      const [returnedVerificationKey, returnedPublicKey, predecessorId, successorId, traceTrailAddress] = registeredTCU;
 
       expect(returnedVerificationKey).to.equal(verificationKey);
       expect(returnedPublicKey).to.equal(publicKey);
       expect(predecessorId).to.equal(ethers.ZeroAddress);
-      expect(successorId).to.equal(vcc2.address);
-      expect(traceTrailAddress).to.equal(await vccTraceTrail.getAddress());
+      expect(successorId).to.equal(tcu2.address);
+      expect(traceTrailAddress).to.equal(await tcuTraceTrail.getAddress());
     });
 
-    it("Should not allow registering the same VCC twice", async () => {
+    it("Should not allow registering the same TCU twice", async () => {
         const verificationKey = "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds--VerificationKey1";
         const publicKey =       "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds------QmPublicKey1";
   
 
-      await vccRegistry.connect(vcc1).registerVCC(
+      await tcuRegistry.connect(tcu1).registerTCU(
         verificationKey,
         publicKey,
         ethers.ZeroAddress,
-        vcc2.address,
-        await vccTraceTrail.getAddress()
+        tcu2.address,
+        await tcuTraceTrail.getAddress()
       );
 
       await expect(
-        vccRegistry.connect(vcc1).registerVCC(
+        tcuRegistry.connect(tcu1).registerTCU(
           verificationKey,
           publicKey,
           ethers.ZeroAddress,
-          vcc2.address,
-          await vccTraceTrail.getAddress()
+          tcu2.address,
+          await tcuTraceTrail.getAddress()
         )
-      ).to.be.revertedWith("VCC already registered");
+      ).to.be.revertedWith("TCU already registered");
     });
 
-    it("Should correctly identify registered VCCs", async () => {
+    it("Should correctly identify registered TCUs", async () => {
         const verificationKey = "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds--VerificationKey1";
         const publicKey =       "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds------QmPublicKey1";
   
-      await vccRegistry.connect(vcc1).registerVCC(
+      await tcuRegistry.connect(tcu1).registerTCU(
         verificationKey,
         publicKey,
         ethers.ZeroAddress,
-        vcc2.address,
-        await vccTraceTrail.getAddress()
+        tcu2.address,
+        await tcuTraceTrail.getAddress()
       );
 
-      expect(await vccRegistry.isRegisteredVCC(vcc1.address)).to.be.true;
-      expect(await vccRegistry.isRegisteredVCC(vcc2.address)).to.be.false;
+      expect(await tcuRegistry.isRegisteredTCU(tcu1.address)).to.be.true;
+      expect(await tcuRegistry.isRegisteredTCU(tcu2.address)).to.be.false;
     });
   });
 
-  describe("VCCTraceTrail", () => {
+  describe("TCUTraceTrail", () => {
     beforeEach(async () => {
-      // Register VCCs
+      // Register TCUs
       const verificationKey = "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds--VerificationKey1";
       const publicKey =       "ipfs://QmeeQhGoyMQc7eQWERE88kFFq4WbdVRrjHctZhH1hPHNds------QmPublicKey1";
 
 
-      await vccRegistry.connect(vcc1).registerVCC(
+      await tcuRegistry.connect(tcu1).registerTCU(
         verificationKey,
         publicKey,
         ethers.ZeroAddress,
-        vcc2.address,
-        await vccTraceTrail.getAddress()
+        tcu2.address,
+        await tcuTraceTrail.getAddress()
       );
 
-      await vccRegistry.connect(vcc2).registerVCC(
+      await tcuRegistry.connect(tcu2).registerTCU(
         verificationKey,
         publicKey,
-        vcc1.address,
-        vcc3.address,
-        await vccTraceTrail.getAddress()
+        tcu1.address,
+        tcu3.address,
+        await tcuTraceTrail.getAddress()
       );
     });
 
-    it("Should log a trace event for a registered VCC", async () => {
+    it("Should log a trace event for a registered TCU", async () => {
       const eventId = ethers.encodeBytes32String("event1");
       const outputCommitment = ethers.encodeBytes32String("output1");
       const internalInputCommitment = ethers.encodeBytes32String("internal1");
@@ -117,7 +117,7 @@ describe("VCC System", () => {
       const executionSpanId = ethers.encodeBytes32String("span1");
 
       await expect(
-        vccTraceTrail.connect(vcc1).logTraceEvent(
+        tcuTraceTrail.connect(tcu1).logTraceEvent(
           eventId,
           outputCommitment,
           internalInputCommitment,
@@ -125,15 +125,15 @@ describe("VCC System", () => {
           ethers.ZeroAddress,
           executionSpanId
         )
-      ).to.emit(vccTraceTrail, "TraceEventLogged");
+      ).to.emit(tcuTraceTrail, "TraceEventLogged");
 
-      const loggedEvent = await vccTraceTrail.getTraceEvent(vcc1.address, eventId);
+      const loggedEvent = await tcuTraceTrail.getTraceEvent(tcu1.address, eventId);
       expect(loggedEvent.outputCommitment).to.equal(outputCommitment);
       expect(loggedEvent.internalInputCommitment).to.equal(internalInputCommitment);
       expect(loggedEvent.externalInputCommitment).to.equal(externalInputCommitment);
     });
 
-    it("Should not allow logging a trace event for an unregistered VCC", async () => {
+    it("Should not allow logging a trace event for an unregistered TCU", async () => {
       const eventId = ethers.encodeBytes32String("event1");
       const outputCommitment = ethers.encodeBytes32String("output1");
       const internalInputCommitment = ethers.encodeBytes32String("internal1");
@@ -141,15 +141,15 @@ describe("VCC System", () => {
       const executionSpanId = ethers.encodeBytes32String("span1");
 
       await expect(
-        vccTraceTrail.connect(vcc3).logTraceEvent(
+        tcuTraceTrail.connect(tcu3).logTraceEvent(
           eventId,
           outputCommitment,
           internalInputCommitment,
           externalInputCommitment,
-          vcc2.address,
+          tcu2.address,
           executionSpanId
         )
-      ).to.be.revertedWith("Caller is not a registered VCC");
+      ).to.be.revertedWith("Caller is not a registered TCU");
     });
 
     it("Should not allow logging the same trace event twice", async () => {
@@ -159,7 +159,7 @@ describe("VCC System", () => {
       const externalInputCommitment = ethers.encodeBytes32String("external1");
       const executionSpanId = ethers.encodeBytes32String("span1");
 
-      await vccTraceTrail.connect(vcc1).logTraceEvent(
+      await tcuTraceTrail.connect(tcu1).logTraceEvent(
         eventId,
         outputCommitment,
         internalInputCommitment,
@@ -169,7 +169,7 @@ describe("VCC System", () => {
       );
 
       await expect(
-        vccTraceTrail.connect(vcc1).logTraceEvent(
+        tcuTraceTrail.connect(tcu1).logTraceEvent(
           eventId,
           outputCommitment,
           internalInputCommitment,

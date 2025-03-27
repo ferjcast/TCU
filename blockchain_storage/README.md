@@ -1,12 +1,12 @@
-# VeriFlow Smart Contracts
+# Trusted Compute Units Smart Contracts
 
-This project contains the smart contracts for the VeriFlow system, implemented using Solidity and tested with Hardhat.
+This project contains the smart contracts for the system, implemented using Solidity and tested with Hardhat.
 
 ## Overview
 
 The project includes two main contracts:
 
-1. **VCCRegistry**: Manages the registration of Verifiable Composable Components (VCCs).
+1. **TCURegistry**: Manages the registration of Trusted Compute Units (TCUs).
 2. **AuditTrail**: Handles the logging of trace events for workflow execution.
 
 ## Prerequisites

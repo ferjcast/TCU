@@ -23,7 +23,7 @@ Test each component by following the instructions in their respective READMEs:
 
 The `blockchain_storage/` directory contains the smart contract implementation for the Decentralized Management Platform. This includes:
 
-- VCC Registry
+- TCU Registry
 - Audit Trail
 - Smart contracts for managing workflow states
 
@@ -40,7 +40,7 @@ For more information on setting up and using the enclave attestation tools, see 
 
 ### Verifiable Computation
 
-The `verifiable_computation/` directory contains the implementation of Verifiable Composable Components (VCCs) using both TEEs and zkVMs. This includes:
+The `verifiable_computation/` directory contains the implementation of Verifiable Computation Component (VCC) using both TEEs and zkVMs. This includes:
 
 - Federating Learning Training and Aggregation implementations
 - Matrix multiplication implementations
