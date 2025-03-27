@@ -8,6 +8,9 @@ import Crypto
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 
+from Crypto.Hash import SHA256
+from Crypto.Signature import pss
+
 import libnsm
 
 class NSMUtil():
@@ -33,6 +36,10 @@ class NSMUtil():
         # for KMS Decrypt calls with this document.
         self._rsa_key = RSA.generate(2048)
         self._public_key = self._rsa_key.publickey().export_key('DER')
+        print("self._rsa_key.exportKey()")
+        print(self._rsa_key.exportKey())
+        print("self._rsa_key.publickey().exportKey()")
+        print(self._rsa_key.publickey().exportKey())
 
     def get_attestation_doc(self):
         """Get the attestation document from /dev/nsm."""
@@ -51,6 +58,45 @@ class NSMUtil():
         plaintext = cipher.decrypt(ciphertext)
 
         return plaintext.decode()
+
+    def sign(self, message):
+        """
+        Sign the given message with the RSA private key.
+
+        :param message: The message to sign (as bytes).
+        :return: The signature (as bytes).
+        """
+        # Hash the message
+        h = SHA256.new(message)
+        # Create a signature using PSS (recommended)
+        signer = pss.new(self._rsa_key)
+        signature = signer.sign(h)
+
+        # If you prefer PKCS#1 v1.5, uncomment below and comment out the PSS lines:
+        # signer = pkcs1_15.new(self._rsa_key)
+        # signature = signer.sign(h)
+
+        return signature
+
+    def verify_signature(self, message, signature):
+        """
+        Verify the signature for the given message using the RSA public key.
+
+        :param message: The original message (as bytes).
+        :param signature: The signature to verify (as bytes).
+        :return: True if valid, False otherwise.
+        """
+        h = SHA256.new(message)
+        verifier = pss.new(self._rsa_key.publickey())
+
+        # If you prefer PKCS#1 v1.5, uncomment below and comment out the PSS lines:
+        # verifier = pkcs1_15.new(self._rsa_key.publickey())
+
+        try:
+            verifier.verify(h, signature)
+            return True
+        except (ValueError, TypeError):
+            return False
 
     @classmethod
     def _monkey_patch_crypto(cls, nsm_rand_func):

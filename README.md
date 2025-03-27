@@ -1,6 +1,6 @@
-# VeriFlow
+# Trusted Compute Units
 
-This repository contains the implementation of VeriFlow, a system for enabling secure, verifiable, and auditable cross-organizational workflows.
+This repository contains the implementation of Trusted Compute Units, a system for enabling secure, verifiable, and auditable cross-organizational workflows.
 
 ## Project Structure
 
@@ -8,7 +8,7 @@ The project is divided into three main components:
 
 1. `blockchain_storage/`: Implementation of the Decentralized Management Platform (DMP)
 2. `enclave_attestation/`: Tools and utilities for Trusted Execution Environment (TEE) attestation
-3. `verifiable_computation/`: Implementation of Verifiable Composable Components (VCCs) using TEEs and zkVMs
+3. `verifiable_computation/`: Implementation of Computing Part (AL) using TEEs and zkVMs
 
 ## Getting Started
 

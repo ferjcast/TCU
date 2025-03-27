@@ -17,10 +17,20 @@ def verify_attestation_doc(attestation_doc, pcrs = [], root_cert_pem = None):
     """
     # Decode CBOR attestation document
     data = cbor2.loads(attestation_doc)
+    
+    print("verify_attestation_doc")
+    print("data")
+    print(data)
 
     # Load and decode document payload
     doc = data[2]
     doc_obj = cbor2.loads(doc)
+    
+    print("doc_obj")
+    print(doc_obj)
+
+    print("public_key")
+    print(doc_obj["public_key"])
 
     # Get PCRs from attestation document
     document_pcrs_arr = doc_obj['pcrs']

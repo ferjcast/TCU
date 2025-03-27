@@ -4,7 +4,7 @@ This project is a fork of [nitro-enclave-python-demo](https://github.com/richard
 
 ## About This Fork
 
-This fork extends the original Nitro Enclave Python demo with additional measurements for the verification time of the attestation document
+This fork extends the original Nitro Enclave Python demo with additional measurements and the implementation of /info, /compute, /proofRetrieval for the verification time of the attestation document
 
 # AWS Nitro Enclaves Python demo
 

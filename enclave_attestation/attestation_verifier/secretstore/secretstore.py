@@ -40,6 +40,10 @@ def main():
 
         # Get PCR0 from command line parameter
         pcr0 = sys.argv[1]
+        print("pcr0")
+        print(pcr0)
+        print("attestation_doc")
+        print(attestation_doc)
 
         # Verify attestation document
         try:
