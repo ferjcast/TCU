@@ -58,7 +58,7 @@ See [Architecture diagram](./docs/architecture.md)
 1. Use the build script to build the enclave image
 
    ```
-   $ cd VeriFlow/enclave_attestation/attestation_verifier/server
+   $ cd TCU/enclave_attestation/attestation_verifier/server
    $ chmod +x build.sh
    $ ./build.sh
    ```
@@ -82,7 +82,7 @@ See [Architecture diagram](./docs/architecture.md)
 1. Run the enclave
 
    ```
-   $ nitro-cli run-enclave --cpu-count 2 --memory 2048 --eif-path nitro-enclave-python-demo.eif
+   $ nitro-cli run-enclave --cpu-count 2 --memory 2048 --eif-path attestation-verifier-app.eif
    ```
 
 1. After the enclave has launched, you can find the CID of it.
@@ -93,27 +93,18 @@ See [Architecture diagram](./docs/architecture.md)
    Started enclave with enclave-cid: 16, memory: 1024 MiB, cpu-ids: [1, 3]
    ```
 
-1. Open a new SSH session, install python3 and the necessary packages for running SecretStore app
+
+
+1. Open another SSH session, run the client app, replace `<cid>` with the enclave CID you get in step 10, replace `<pcr0>` with the `PCR0` value you get in step 8
 
    ```
    $ yum install python3 -y
-   $ cd nitro-enclave-python-demo/attestation_verifier/secretstore/
+   $ cd enclave_attestation/attestation_verifier/secretstore/
    $ python3 -m venv venv
    $ source venv/bin/activate
    $ pip install -r requirements.txt
-   ```
-
-1. Run the SecretStore app, replace `<pcr0>` with the `PCR0` value you get in step 8
-
-   ```
-   $ python3 secretstore.py <pcr0>
-   ```
-
-1. Open another SSH session, run the client app, replace `<cid>` with the enclave CID you get in step 10
-
-   ```
-   $ cd nitro-enclave-python-demo/attestation_verifier/client
-   $ python3 client.py <cid>
+   $ cd enclave_attestation/attestation_verifier/client
+   $ python3 client.py <cid> <pcr0>
    ```
 
 1. If everthing is OK, you will see the secret plaintext shown in the console output.
